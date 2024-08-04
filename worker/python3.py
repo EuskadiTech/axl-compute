@@ -24,11 +24,17 @@ def on_message(client, userdata, msg):
     ms = json.loads(msg.payload.decode("utf-8"))
     if ms["type"] == "python-inline":
         loc = {}
-        exec(ms["script"], globals(), loc)
-        client.publish(ms["out-topic"], safe_serialize(loc))
+        try:
+          exec(ms["script"], globals(), loc)
+          client.publish(ms["out-topic"], safe_serialize(loc))
+        except Exception as e:
+          client.publish(ms["out-topic"], safe_serialize({"_err": str(e)}))
     elif ms["type"] == "cmd":
-        e = subprocess.check_output(ms["script"], shell=True)
-        client.publish(ms["out-topic"], safe_serialize({"out": e.decode("utf-8")}))
+        try:
+          e = subprocess.check_output(ms["script"], shell=True)
+          client.publish(ms["out-topic"], safe_serialize({"out": e.decode("utf-8")}))
+        except Exception as e:
+          client.publish(ms["out-topic"], safe_serialize({"_err": str(e)}))
     print(msg.topic+" "+str(ms))
 
 
