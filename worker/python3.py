@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import json
 import subprocess
-
+from os import environ as env
 NODE = env["AXL_NODE"]
 MQUSER = env["AXL_MQUSER"]
 MQPASS = env["AXL_MQPASS"]
