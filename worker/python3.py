@@ -6,7 +6,7 @@ NODE = env["AXL_NODE"]
 MQUSER = env["AXL_MQUSER"]
 MQPASS = env["AXL_MQPASS"]
 MQHOST = env["AXL_MQHOST"]
-MQPORT = env["AXL_MQPORT"]
+MQPORT = int(env["AXL_MQPORT"])
 MQTLS = env.get("AXL_MQTLS")
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -34,7 +34,7 @@ def on_message(client, userdata, msg):
 
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
-if MQTLS = "1":
+if MQTLS == "1":
   mqttc.tls_set()
 mqttc.username_pw_set(MQUSER, MQPASS)
 
