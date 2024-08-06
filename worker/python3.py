@@ -23,7 +23,7 @@ def safe_serialize(obj):
 def on_message(client, userdata, msg):
     ms = json.loads(msg.payload.decode("utf-8"))
     if ms["type"] == "python-inline":
-        loc = {"_input": {"payload": ms}}
+        loc = {"_input": ms}
         try:
           exec(ms["script"], globals(), loc)
           client.publish(ms["out-topic"], safe_serialize(loc))
