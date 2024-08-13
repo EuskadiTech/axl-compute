@@ -2,13 +2,18 @@ import machine
 import time
 import ubinascii
 import json
-
+import network
+import socket
+from time import sleep
 from umqtt.simple import MQTTClient
-
+    
 # These defaults are overwritten with the contents of /config.json by load_config()
 CONFIG = {
-    "node": "ES48920-MP-001"
+    "node": "ES48920-MP-001",
+    "ap_name": "Gameme 2.4G",
+    "ap_pass": "D9RFYKCA76PFYXH4",
     "broker": "",
+    "port": 0,
     "user": "",
     "passw": "",
     "ssl": True,
@@ -34,6 +39,16 @@ def sub_cb(topic, msg):
     elif ms["type"] == "cmd":
         client.publish(ms["out-topic"], safe_serialize({"_err": str("This is a MicroPython node, the cmd type is not compatible.")}))
     print(msg.topic+" "+str(ms))
+    
+def connect():
+    #Connect to WLAN
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    wlan.connect(CONFIG["ap_name"], CONFIG["ap_pass"])
+    while wlan.isconnected() == False:
+        print('Waiting for connection...')
+        sleep(1)
+    print(wlan.ifconfig())
 def main():
     client = MQTTClient(CONFIG['client_id'], CONFIG['broker'], CONFIG["port"], CONFIG["user"], CONFIG["passw"], 0, CONFIG["ssl"])
     client.set_callback(sub_cb)
@@ -52,4 +67,8 @@ def main():
             time.sleep(1)
 
 if __name__ == '__main__':
+    try:
+        connect()
+    except KeyboardInterrupt:
+        machine.reset()
     main()
