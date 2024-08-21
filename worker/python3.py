@@ -27,14 +27,18 @@ def on_message(client, userdata, msg):
         try:
           exec(ms["script"], globals(), loc)
           client.publish(ms["out-topic"], safe_serialize(loc))
+          client.publish(f"axlcore/telemetry/{NODE}", safe_serialize({"type": ms["type"], "status": "Ok", "node": NODE}))
         except Exception as e:
           client.publish(ms["out-topic"], safe_serialize({"_err": str(e)}))
+          client.publish(f"axlcore/telemetry/{NODE}", safe_serialize({"type": ms["type"], "status": str(e), "node": NODE}))
     elif ms["type"] == "cmd":
         try:
           e = subprocess.check_output(ms["script"], shell=True)
           client.publish(ms["out-topic"], safe_serialize({"out": e.decode("utf-8")}))
+          client.publish(f"axlcore/telemetry/{NODE}", safe_serialize({"type": ms["type"], "status": "Ok", "node": NODE}))
         except Exception as e:
           client.publish(ms["out-topic"], safe_serialize({"_err": str(e)}))
+          client.publish(f"axlcore/telemetry/{NODE}", safe_serialize({"type": ms["type"], "status": str(e), "node": NODE}))
     print(msg.topic+" "+str(ms))
 
 
