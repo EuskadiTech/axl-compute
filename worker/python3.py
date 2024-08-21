@@ -14,6 +14,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe(f"axlcore/node/{NODE}")
+    print(f"axlcore/node/{NODE}")
 mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 # The callback for when a PUBLISH message is received from the server.
 def safe_serialize(obj):
